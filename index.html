@@ -9,66 +9,185 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Escalade Trainer">
 <link rel="apple-touch-icon" href="icon-192.png">
+
 <style>
-body{font-family:Arial,sans-serif;margin:0;padding:0;background:#0f1724;color:#fff;}
-h1,h2,h3{margin:0;padding:.3em;}
-.card{padding:12px;background:#0b1220;border-radius:10px;margin:8px;}
-button{padding:6px 10px;margin:2px;border-radius:6px;border:none;background:#4f46e5;color:#fff;cursor:pointer;}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #f8fafc;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.8em;
+  margin: 1em 0 0.5em 0;
+  color: #a5b4fc;
+  letter-spacing: 1px;
+}
+
+h2 {
+  font-size: 1.2em;
+  margin-bottom: 0.4em;
+  color: #c7d2fe;
+}
+
+.card {
+  width: 90%;
+  max-width: 500px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 14px;
+  margin: 12px 0;
+  padding: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.6s ease;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+li {
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+li:last-child {
+  border-bottom: none;
+}
+
+button {
+  padding: 6px 12px;
+  margin-left: 8px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+#timer_display {
+  font-size: 2em;
+  font-weight: bold;
+  color: #a5b4fc;
+  letter-spacing: 1px;
+}
+
+.reset-btn {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+  margin-top: 10px;
+}
+
+footer {
+  margin-top: auto;
+  padding: 12px;
+  font-size: 0.9em;
+  opacity: 0.6;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 </style>
 </head>
 <body>
-<h1>Programme Escalade & Musculation</h1>
+<h1>🏔️ Programme Escalade & Musculation</h1>
 
 <div class="card">
-<h2>Calendrier</h2>
-<p>Semaine avec séances :</p>
-<ul>
-<li>Lundi : Poussée + Core</li>
-<li>Mardi : Tirage + Grip</li>
-<li>Mercredi : Jambes + Explosivité</li>
-<li>Jeudi : Haut du corps + Doigts</li>
-<li>Vendredi : Tirage + Core</li>
-</ul>
+  <h2>🗓️ Calendrier</h2>
+  <p>Semaine avec séances :</p>
+  <ul>
+    <li>Lundi : Poussée + Core</li>
+    <li>Mardi : Tirage + Grip</li>
+    <li>Mercredi : Jambes + Explosivité</li>
+    <li>Jeudi : Haut du corps + Doigts</li>
+    <li>Vendredi : Tirage + Core</li>
+  </ul>
 </div>
 
 <div class="card">
-<h2>Exemple de séance (Lundi)</h2>
-<ul>
-<li>Pompes classiques - 3 séries de 8-10 reps <button onclick="inc('push')">+</button><span id="push_count">0</span></li>
-<li>Planche - 3 séries de 30-40s <button onclick="inc('plank')">+</button><span id="plank_count">0</span></li>
-<li>Squats - 3 séries de 12 reps <button onclick="inc('squat')">+</button><span id="squat_count">0</span></li>
-</ul>
-<button onclick="reset()">Reset séries</button>
+  <h2>💪 Exemple de séance (Lundi)</h2>
+  <ul>
+    <li>Pompes classiques — 3×8-10 reps 
+      <span>
+        <button onclick="inc('push')">+</button>
+        <span id="push_count">0</span>
+      </span>
+    </li>
+    <li>Planche — 3×30-40s 
+      <span>
+        <button onclick="inc('plank')">+</button>
+        <span id="plank_count">0</span>
+      </span>
+    </li>
+    <li>Squats — 3×12 reps 
+      <span>
+        <button onclick="inc('squat')">+</button>
+        <span id="squat_count">0</span>
+      </span>
+    </li>
+  </ul>
+  <button class="reset-btn" onclick="reset()">🔄 Reset séries</button>
 </div>
 
 <div class="card">
-<h2>Minuteur global</h2>
-<p><span id="timer_display">00:00</span></p>
-<button onclick="startTimer()">Start</button>
-<button onclick="stopTimer()">Stop</button>
-<button onclick="resetTimer()">Reset</button>
+  <h2>⏱️ Minuteur global</h2>
+  <p><span id="timer_display">00:00</span></p>
+  <div>
+    <button onclick="startTimer()">▶ Start</button>
+    <button onclick="stopTimer()">⏸ Stop</button>
+    <button onclick="resetTimer()" class="reset-btn">🔁 Reset</button>
+  </div>
 </div>
+
+<footer>© 2025 Escalade Trainer • Stay Strong 💥</footer>
 
 <script>
 // Compteurs de séries
 function inc(ex){
-    let e = document.getElementById(ex+'_count');
-    let v = parseInt(e.textContent || '0');
-    e.textContent = v+1;
-    localStorage.setItem(ex, v+1);
+  let e = document.getElementById(ex+'_count');
+  let v = parseInt(e.textContent || '0');
+  e.textContent = v+1;
+  localStorage.setItem(ex, v+1);
 }
 
 // Charger valeurs sauvegardées
 ['push','plank','squat'].forEach(ex=>{
-    let val = localStorage.getItem(ex);
-    if(val) document.getElementById(ex+'_count').textContent = val;
+  let val = localStorage.getItem(ex);
+  if(val) document.getElementById(ex+'_count').textContent = val;
 });
 
 function reset(){
-    ['push','plank','squat'].forEach(ex=>{
-        document.getElementById(ex+'_count').textContent='0';
-        localStorage.removeItem(ex);
-    });
+  ['push','plank','squat'].forEach(ex=>{
+    document.getElementById(ex+'_count').textContent='0';
+    localStorage.removeItem(ex);
+  });
 }
 
 // Minuteur global
@@ -76,28 +195,28 @@ let timerInterval;
 let timerSeconds = parseInt(localStorage.getItem('timerSeconds')||'0');
 const display = document.getElementById('timer_display');
 function updateDisplay(){
-    let m = Math.floor(timerSeconds/60);
-    let s = timerSeconds % 60;
-    display.textContent = (m<10?'0':'')+m+":"+(s<10?'0':'')+s;
+  let m = Math.floor(timerSeconds/60);
+  let s = timerSeconds % 60;
+  display.textContent = (m<10?'0':'')+m+":"+(s<10?'0':'')+s;
 }
 updateDisplay();
 
 function startTimer(){
-    if(timerInterval) return;
-    timerInterval = setInterval(()=>{
-        timerSeconds++;
-        localStorage.setItem('timerSeconds', timerSeconds);
-        updateDisplay();
-    },1000);
+  if(timerInterval) return;
+  timerInterval = setInterval(()=>{
+    timerSeconds++;
+    localStorage.setItem('timerSeconds', timerSeconds);
+    updateDisplay();
+  },1000);
 }
 function stopTimer(){
-    clearInterval(timerInterval);
-    timerInterval = null;
+  clearInterval(timerInterval);
+  timerInterval = null;
 }
 function resetTimer(){
-    timerSeconds=0;
-    updateDisplay();
-    localStorage.removeItem('timerSeconds');
+  timerSeconds=0;
+  updateDisplay();
+  localStorage.removeItem('timerSeconds');
 }
 </script>
 </body>
