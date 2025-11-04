@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>Programme Escalade — App</title>
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,16 +13,23 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
+:root {
+  color-scheme: dark;
+  env(safe-area-inset-top);
+}
+
 body {
   font-family: 'Inter', sans-serif;
   margin: 0;
-  padding: 0;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   color: #f8fafc;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
 }
 
 h1 {
@@ -53,21 +60,42 @@ h2 {
   animation: fadeIn 0.6s ease;
 }
 
-ul {
-  list-style: none;
-  padding-left: 0;
+.day {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  margin: 6px 0;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.day:hover {
+  background: rgba(99,102,241,0.15);
 }
 
-li {
-  padding: 8px 0;
+.day h3 {
+  margin: 0;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  align-items: center;
 }
 
-li:last-child {
-  border-bottom: none;
+.day-details {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+  opacity: 0;
+  margin-top: 0;
+}
+.day-details.open {
+  opacity: 1;
+  max-height: 300px;
+  margin-top: 8px;
+}
+
+.day-details ul {
+  list-style: none;
+  padding-left: 12px;
+  margin: 0;
 }
 
 button {
@@ -103,22 +131,6 @@ button:active {
   letter-spacing: 1px;
 }
 
-.progress-container {
-  background: rgba(255,255,255,0.1);
-  border-radius: 10px;
-  height: 12px;
-  width: 100%;
-  overflow: hidden;
-  margin-top: 6px;
-}
-.progress-bar {
-  height: 12px;
-  background: linear-gradient(90deg, #6366f1, #8b5cf6);
-  width: 0%;
-  transition: width 0.4s ease;
-  border-radius: 10px;
-}
-
 footer {
   margin-top: auto;
   padding: 12px;
@@ -135,32 +147,9 @@ footer {
 <body>
 <h1>🏔️ Programme Escalade & Musculation</h1>
 
-<div class="card">
-  <h2>🗓️ Calendrier</h2>
-  <ul>
-    <li>Lundi : Poussée + Core</li>
-    <li>Mardi : Tirage + Grip</li>
-    <li>Mercredi : Jambes + Explosivité</li>
-    <li>Jeudi : Haut du corps + Doigts</li>
-    <li>Vendredi : Tirage + Core</li>
-    <li>Samedi & Dimanche : Repos / Étirements</li>
-  </ul>
-</div>
-
-<div class="card" id="daily_session_card">
-  <h2 id="session_title">💪 Séance du jour</h2>
-  <ul id="session_list"></ul>
-  <button class="reset-btn" onclick="reset()">🔄 Reset séries</button>
-  <button style="margin-top:10px;" onclick="markSessionDone()">✅ Séance terminée</button>
-</div>
-
-<div class="card" id="progress_card">
-  <h2>📈 Progression</h2>
-  <p>Semaine : <span id="week_progress_text"></span></p>
-  <div class="progress-container"><div class="progress-bar" id="week_progress_bar"></div></div>
-  <p style="margin-top:8px;">Mois : <span id="month_progress_text"></span></p>
-  <div class="progress-container"><div class="progress-bar" id="month_progress_bar"></div></div>
-  <p style="margin-top:12px;">🔥 Streak : <span id="streak_value">0</span> jours consécutifs</p>
+<div class="card" id="calendar_card">
+  <h2>🗓️ Calendrier interactif</h2>
+  <div id="calendar"></div>
 </div>
 
 <div class="card">
@@ -178,126 +167,66 @@ footer {
 <script>
 // --- Programme hebdomadaire ---
 const programme = {
-  1: { title: "Poussée + Core", exercices: [
-      {name: "Pompes classiques", series: "3×8-10"},
-      {name: "Planche", series: "3×30-40s"},
-      {name: "Dips sur chaise", series: "3×10"}
+  Lundi: { title: "Poussée + Core", exercices: [
+      "Pompes classiques — 3×8-10",
+      "Planche — 3×30-40s",
+      "Dips sur chaise — 3×10"
   ]},
-  2: { title: "Tirage + Grip", exercices: [
-      {name: "Tractions", series: "3×6-8"},
-      {name: "Suspensions sur poutre", series: "3×20s"},
-      {name: "Rowing inversé", series: "3×10"}
+  Mardi: { title: "Tirage + Grip", exercices: [
+      "Tractions — 3×6-8",
+      "Suspensions sur poutre — 3×20s",
+      "Rowing inversé — 3×10"
   ]},
-  3: { title: "Jambes + Explosivité", exercices: [
-      {name: "Squats sautés", series: "3×12"},
-      {name: "Fentes", series: "3×10"},
-      {name: "Montées de genoux dynamiques", series: "3×30s"}
+  Mercredi: { title: "Jambes + Explosivité", exercices: [
+      "Squats sautés — 3×12",
+      "Fentes — 3×10",
+      "Montées de genoux dynamiques — 3×30s"
   ]},
-  4: { title: "Haut du corps + Doigts", exercices: [
-      {name: "Pompes serrées", series: "3×10"},
-      {name: "Suspension 3 doigts", series: "4×10s"},
-      {name: "Gainage latéral", series: "3×30s / côté"}
+  Jeudi: { title: "Haut du corps + Doigts", exercices: [
+      "Pompes serrées — 3×10",
+      "Suspension 3 doigts — 4×10s",
+      "Gainage latéral — 3×30s / côté"
   ]},
-  5: { title: "Tirage + Core", exercices: [
-      {name: "Tractions australiennes", series: "3×10"},
-      {name: "Crunchs", series: "3×20"},
-      {name: "Planche latérale", series: "3×30s"}
+  Vendredi: { title: "Tirage + Core", exercices: [
+      "Tractions australiennes — 3×10",
+      "Crunchs — 3×20",
+      "Planche latérale — 3×30s"
+  ]},
+  Samedi: { title: "Repos actif", exercices: [
+      "Étirements dynamiques",
+      "Mobilité épaules et hanches",
+      "Marche ou yoga léger"
+  ]},
+  Dimanche: { title: "Repos total", exercices: [
+      "Hydratation",
+      "Repos complet",
+      "Préparation de la semaine"
   ]}
 };
 
-// --- Afficher la séance du jour ---
-const day = new Date().getDay(); // 0=Dimanche, 1=Lundi...
-const sessionList = document.getElementById('session_list');
-const title = document.getElementById('session_title');
+// --- Générer le calendrier ---
+const calendarDiv = document.getElementById('calendar');
+for (const [jour, data] of Object.entries(programme)) {
+  const dayDiv = document.createElement('div');
+  dayDiv.classList.add('day');
+  dayDiv.innerHTML = `
+    <h3>${jour} <span style="font-size:0.9em;opacity:0.7;">${data.title}</span></h3>
+    <div class="day-details">
+      <ul>${data.exercices.map(e => `<li>${e}</li>`).join('')}</ul>
+    </div>
+  `;
+  calendarDiv.appendChild(dayDiv);
+}
 
-if (programme[day]) {
-  const s = programme[day];
-  title.textContent = `💪 Séance du jour (${s.title})`;
-
-  s.exercices.forEach(ex => {
-    const exId = ex.name.replace(/\s+/g,'_').toLowerCase();
-    const li = document.createElement('li');
-    li.innerHTML = `${ex.name} — ${ex.series} 
-      <span>
-        <button onclick="inc('${exId}')">+</button>
-        <span id="${exId}_count">${localStorage.getItem(exId) || 0}</span>
-      </span>`;
-    sessionList.appendChild(li);
+// --- Animation du menu déroulant ---
+const days = document.querySelectorAll('.day');
+days.forEach(day => {
+  day.addEventListener('click', () => {
+    const open = day.querySelector('.day-details').classList.contains('open');
+    document.querySelectorAll('.day-details').forEach(d => d.classList.remove('open'));
+    if (!open) day.querySelector('.day-details').classList.add('open');
   });
-} else {
-  title.textContent = "😌 Jour de repos / étirements";
-  sessionList.innerHTML = "<li>Profite pour récupérer et t’étirer !</li>";
-}
-
-// --- Compteurs de séries ---
-function inc(ex){
-  let e = document.getElementById(ex+'_count');
-  let v = parseInt(e.textContent || '0');
-  e.textContent = v+1;
-  localStorage.setItem(ex, v+1);
-}
-
-function reset(){
-  const spans = document.querySelectorAll('[id$="_count"]');
-  spans.forEach(sp=>{
-    sp.textContent = '0';
-    localStorage.removeItem(sp.id.replace('_count',''));
-  });
-}
-
-// --- Progression, mois et streak ---
-function markSessionDone(){
-  const today = new Date().toISOString().split('T')[0];
-  let history = JSON.parse(localStorage.getItem('sessions_done') || '[]');
-  if(!history.includes(today)){
-    history.push(today);
-    localStorage.setItem('sessions_done', JSON.stringify(history));
-  }
-  updateProgress();
-}
-
-function updateProgress(){
-  const history = JSON.parse(localStorage.getItem('sessions_done') || '[]');
-  const today = new Date();
-  const yearWeek = (d => {
-    const oneJan = new Date(d.getFullYear(),0,1);
-    const numberOfDays = Math.floor((d - oneJan) / (24 * 60 * 60 * 1000));
-    return Math.ceil((numberOfDays + oneJan.getDay()+1) / 7);
-  })(today);
-
-  // Week progress
-  const weekSessions = history.filter(date => {
-    const d = new Date(date);
-    const week = (d => {
-      const oneJan = new Date(d.getFullYear(),0,1);
-      const numberOfDays = Math.floor((d - oneJan) / (24 * 60 * 60 * 1000));
-      return Math.ceil((numberOfDays + oneJan.getDay()+1) / 7);
-    })(d);
-    return week === yearWeek;
-  }).length;
-  const weekProgress = Math.min((weekSessions / 5) * 100, 100);
-  document.getElementById('week_progress_bar').style.width = weekProgress + '%';
-  document.getElementById('week_progress_text').textContent = `${weekSessions}/5 séances`;
-
-  // Month progress
-  const month = today.getMonth();
-  const monthSessions = history.filter(date => new Date(date).getMonth() === month).length;
-  const monthDays = new Date(today.getFullYear(), month+1, 0).getDate();
-  const monthProgress = Math.min((monthSessions / (monthDays/2)) * 100, 100);
-  document.getElementById('month_progress_bar').style.width = monthProgress + '%';
-  document.getElementById('month_progress_text').textContent = `${monthSessions} séances`;
-
-  // Streak
-  let streak = 0;
-  let checkDate = new Date(today);
-  while(history.includes(checkDate.toISOString().split('T')[0])){
-    streak++;
-    checkDate.setDate(checkDate.getDate()-1);
-  }
-  document.getElementById('streak_value').textContent = streak;
-}
-
-updateProgress();
+});
 
 // --- Minuteur global ---
 let timerInterval;
