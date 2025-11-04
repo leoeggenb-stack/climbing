@@ -15,14 +15,13 @@
 
 :root {
   color-scheme: dark;
-  env(safe-area-inset-top);
 }
 
 body {
   font-family: 'Inter', sans-serif;
   margin: 0;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background: linear-gradient(145deg, #0f172a, #1e293b);
   color: #f8fafc;
   min-height: 100vh;
   display: flex;
@@ -36,91 +35,77 @@ h1 {
   text-align: center;
   font-weight: 700;
   font-size: 1.8em;
-  margin: 1em 0 0.5em 0;
+  margin: 1em 0 0.5em;
   color: #a5b4fc;
-  letter-spacing: 1px;
 }
 
 h2 {
   font-size: 1.2em;
-  margin-bottom: 0.4em;
   color: #c7d2fe;
+  margin-bottom: 0.6em;
 }
 
 .card {
   width: 90%;
   max-width: 500px;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(99, 102, 241, 0.25);
   border-radius: 14px;
   margin: 12px 0;
-  padding: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  padding: 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(10px);
-  animation: fadeIn 0.6s ease;
+  transition: transform 0.25s ease, background 0.25s ease;
 }
-
-.day {
-  padding: 10px 12px;
-  border-radius: 8px;
-  background: rgba(255,255,255,0.05);
-  margin: 6px 0;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-.day:hover {
-  background: rgba(99,102,241,0.15);
-}
-
-.day h3 {
-  margin: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.day-details {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.4s ease, opacity 0.3s ease;
-  opacity: 0;
-  margin-top: 0;
-}
-.day-details.open {
-  opacity: 1;
-  max-height: 300px;
-  margin-top: 8px;
-}
-
-.day-details ul {
-  list-style: none;
-  padding-left: 12px;
-  margin: 0;
+.card:hover {
+  transform: translateY(-3px);
+  background: rgba(30, 41, 59, 0.95);
 }
 
 button {
   padding: 6px 12px;
-  margin-left: 8px;
-  border-radius: 8px;
+  margin: 4px;
   border: none;
+  border-radius: 8px;
   background: linear-gradient(90deg, #6366f1, #8b5cf6);
   color: #fff;
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.15s ease, opacity 0.15s ease;
 }
+button:hover { transform: scale(1.05); opacity: 0.9; }
+button:active { transform: scale(0.95); }
+.reset-btn { background: linear-gradient(90deg, #ef4444, #f87171); }
 
-button:hover {
-  transform: scale(1.05);
-  opacity: 0.9;
+ul { margin: 0; padding-left: 18px; }
+
+.day {
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 6px 0;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.day:hover { background: rgba(99,102,241,0.15); }
+
+.day h3 {
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
 }
 
-button:active {
-  transform: scale(0.95);
+.day-details {
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(.25,.8,.25,1);
+  opacity: 0;
 }
-
-.reset-btn {
-  background: linear-gradient(90deg, #ef4444, #f87171);
+.day-details.open {
+  opacity: 1;
+  max-height: 300px;
   margin-top: 10px;
 }
 
@@ -128,128 +113,151 @@ button:active {
   font-size: 2em;
   font-weight: bold;
   color: #a5b4fc;
-  letter-spacing: 1px;
 }
 
 footer {
   margin-top: auto;
   padding: 12px;
-  font-size: 0.9em;
   opacity: 0.6;
+  font-size: 0.9em;
 }
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+.progress-bar {
+  height: 12px;
+  background: rgba(99,102,241,0.2);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+.progress-inner {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  width: 0%;
+  border-radius: 6px;
+  transition: width 0.6s ease-in-out;
+}
+.streak {
+  font-size: 1.4em;
+  font-weight: 700;
+  color: #facc15;
 }
 </style>
 </head>
 <body>
 <h1>🏔️ Programme Escalade & Musculation</h1>
 
+<!-- 📆 CALENDRIER INTERACTIF -->
 <div class="card" id="calendar_card">
-  <h2>🗓️ Calendrier interactif</h2>
+  <h2>🗓️ Calendrier hebdomadaire</h2>
   <div id="calendar"></div>
 </div>
 
+<!-- 🔥 SEANCE DU JOUR -->
+<div class="card" id="today_card">
+  <h2>💪 Séance du jour</h2>
+  <ul id="today_list"></ul>
+</div>
+
+<!-- 📈 PROGRESSION MENSUELLE -->
+<div class="card">
+  <h2>📊 Progression mensuelle</h2>
+  <p id="progress_percent">0%</p>
+  <div class="progress-bar"><div class="progress-inner" id="progress_inner"></div></div>
+</div>
+
+<!-- 🔥 STREAK -->
+<div class="card">
+  <h2>🔥 Streak</h2>
+  <p id="streak_display" class="streak">0 jours</p>
+</div>
+
+<!-- ⏱️ MINUTEUR -->
 <div class="card">
   <h2>⏱️ Minuteur global</h2>
   <p><span id="timer_display">00:00</span></p>
-  <div>
-    <button onclick="startTimer()">▶ Start</button>
-    <button onclick="stopTimer()">⏸ Stop</button>
-    <button onclick="resetTimer()" class="reset-btn">🔁 Reset</button>
-  </div>
+  <button onclick="startTimer()">▶ Start</button>
+  <button onclick="stopTimer()">⏸ Stop</button>
+  <button onclick="resetTimer()" class="reset-btn">🔁 Reset</button>
 </div>
 
-<footer>© 2025 Escalade Trainer • Stay Strong 💥</footer>
+<footer>© 2025 Léo EGGENSCHWILLER • Stay Strong 💥</footer>
 
 <script>
-// --- Programme hebdomadaire ---
+// --- PROGRAMME ---
 const programme = {
-  Lundi: { title: "Poussée + Core", exercices: [
-      "Pompes classiques — 3×8-10",
-      "Planche — 3×30-40s",
-      "Dips sur chaise — 3×10"
-  ]},
-  Mardi: { title: "Tirage + Grip", exercices: [
-      "Tractions — 3×6-8",
-      "Suspensions sur poutre — 3×20s",
-      "Rowing inversé — 3×10"
-  ]},
-  Mercredi: { title: "Jambes + Explosivité", exercices: [
-      "Squats sautés — 3×12",
-      "Fentes — 3×10",
-      "Montées de genoux dynamiques — 3×30s"
-  ]},
-  Jeudi: { title: "Haut du corps + Doigts", exercices: [
-      "Pompes serrées — 3×10",
-      "Suspension 3 doigts — 4×10s",
-      "Gainage latéral — 3×30s / côté"
-  ]},
-  Vendredi: { title: "Tirage + Core", exercices: [
-      "Tractions australiennes — 3×10",
-      "Crunchs — 3×20",
-      "Planche latérale — 3×30s"
-  ]},
-  Samedi: { title: "Repos actif", exercices: [
-      "Étirements dynamiques",
-      "Mobilité épaules et hanches",
-      "Marche ou yoga léger"
-  ]},
-  Dimanche: { title: "Repos total", exercices: [
-      "Hydratation",
-      "Repos complet",
-      "Préparation de la semaine"
-  ]}
+  Lundi: { title: "Poussée + Core", ex: ["Pompes classiques — 3×10", "Planche — 3×40s", "Dips — 3×8"] },
+  Mardi: { title: "Tirage + Grip", ex: ["Tractions — 3×8", "Suspension sur poutre — 3×20s", "Rowing inversé — 3×10"] },
+  Mercredi: { title: "Jambes + Explosivité", ex: ["Squats sautés — 3×12", "Fentes — 3×10", "Montées de genoux — 3×30s"] },
+  Jeudi: { title: "Haut du corps + Doigts", ex: ["Pompes serrées — 3×10", "Suspension 3 doigts — 4×10s", "Gainage latéral — 3×30s"] },
+  Vendredi: { title: "Tirage + Core", ex: ["Tractions australiennes — 3×10", "Crunchs — 3×20", "Planche latérale — 3×30s"] },
+  Samedi: { title: "Repos actif", ex: ["Étirements", "Mobilité", "Yoga doux"] },
+  Dimanche: { title: "Repos total", ex: ["Hydratation", "Préparation semaine", "Sieste 😴"] }
 };
 
-// --- Générer le calendrier ---
-const calendarDiv = document.getElementById('calendar');
-for (const [jour, data] of Object.entries(programme)) {
-  const dayDiv = document.createElement('div');
-  dayDiv.classList.add('day');
-  dayDiv.innerHTML = `
-    <h3>${jour} <span style="font-size:0.9em;opacity:0.7;">${data.title}</span></h3>
-    <div class="day-details">
-      <ul>${data.exercices.map(e => `<li>${e}</li>`).join('')}</ul>
-    </div>
-  `;
-  calendarDiv.appendChild(dayDiv);
+// --- CALENDRIER INTERACTIF ---
+const calendar = document.getElementById('calendar');
+for (const [day, data] of Object.entries(programme)) {
+  const d = document.createElement('div');
+  d.className = 'day';
+  d.innerHTML = `<h3>${day} <span style="font-size:.9em;opacity:.7;">${data.title}</span></h3>
+    <div class="day-details"><ul>${data.ex.map(e=>`<li>${e}</li>`).join('')}</ul></div>`;
+  calendar.appendChild(d);
 }
-
-// --- Animation du menu déroulant ---
 const days = document.querySelectorAll('.day');
-days.forEach(day => {
-  day.addEventListener('click', () => {
-    const open = day.querySelector('.day-details').classList.contains('open');
-    document.querySelectorAll('.day-details').forEach(d => d.classList.remove('open'));
-    if (!open) day.querySelector('.day-details').classList.add('open');
+days.forEach(day=>{
+  day.addEventListener('click',()=>{
+    const details = day.querySelector('.day-details');
+    const open = details.classList.contains('open');
+    document.querySelectorAll('.day-details').forEach(d=>d.classList.remove('open'));
+    if(!open) details.classList.add('open');
   });
 });
 
-// --- Minuteur global ---
+// --- SEANCE DU JOUR ---
+const todayName = new Date().toLocaleDateString('fr-FR', { weekday: 'long' });
+const capitalized = todayName.charAt(0).toUpperCase() + todayName.slice(1);
+const todayData = programme[capitalized];
+if (todayData) {
+  document.getElementById('today_list').innerHTML = todayData.ex.map(e=>`<li>${e}</li>`).join('');
+}
+
+// --- STREAK ---
+let streak = parseInt(localStorage.getItem('streak')||'0');
+let lastDay = localStorage.getItem('lastDay');
+const today = new Date().toDateString();
+if (lastDay !== today) {
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+  if (lastDay === yesterday.toDateString()) streak++; else streak = 1;
+  localStorage.setItem('streak', streak);
+  localStorage.setItem('lastDay', today);
+}
+document.getElementById('streak_display').textContent = `${streak} jour${streak>1?'s':''}`;
+
+// --- PROGRESSION MENSUELLE ---
+const now = new Date();
+const monthProgress = Math.round((now.getDate()/new Date(now.getFullYear(), now.getMonth()+1, 0).getDate())*100);
+document.getElementById('progress_percent').textContent = monthProgress+"%";
+document.getElementById('progress_inner').style.width = monthProgress+"%";
+
+// --- MINUTEUR ---
 let timerInterval;
 let timerSeconds = parseInt(localStorage.getItem('timerSeconds')||'0');
 const display = document.getElementById('timer_display');
 function updateDisplay(){
-  let m = Math.floor(timerSeconds/60);
-  let s = timerSeconds % 60;
-  display.textContent = (m<10?'0':'')+m+":"+(s<10?'0':'')+s;
+  let m=Math.floor(timerSeconds/60), s=timerSeconds%60;
+  display.textContent=`${m<10?'0':''}${m}:${s<10?'0':''}${s}`;
 }
 updateDisplay();
-
 function startTimer(){
   if(timerInterval) return;
-  timerInterval = setInterval(()=>{
+  timerInterval=setInterval(()=>{
     timerSeconds++;
-    localStorage.setItem('timerSeconds', timerSeconds);
+    localStorage.setItem('timerSeconds',timerSeconds);
     updateDisplay();
   },1000);
 }
 function stopTimer(){
   clearInterval(timerInterval);
-  timerInterval = null;
+  timerInterval=null;
 }
 function resetTimer(){
   timerSeconds=0;
