@@ -13,99 +13,87 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
-:root {
-  color-scheme: dark;
-}
-
 body {
   font-family: 'Inter', sans-serif;
   margin: 0;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  background: linear-gradient(145deg, #0f172a, #1e293b);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   color: #f8fafc;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
 }
 
 h1 {
   text-align: center;
   font-weight: 700;
   font-size: 1.8em;
-  margin: 1em 0 0.5em;
+  margin: 1em 0 0.5em 0;
   color: #a5b4fc;
+  letter-spacing: 1px;
 }
 
 h2 {
   font-size: 1.2em;
+  margin-bottom: 0.4em;
   color: #c7d2fe;
-  margin-bottom: 0.6em;
 }
 
 .card {
   width: 90%;
   max-width: 500px;
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(99, 102, 241, 0.25);
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(99, 102, 241, 0.2);
   border-radius: 14px;
   margin: 12px 0;
-  padding: 18px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  padding: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(10px);
-  transition: transform 0.25s ease, background 0.25s ease;
+  animation: fadeIn 0.6s ease;
 }
-.card:hover {
-  transform: translateY(-3px);
-  background: rgba(30, 41, 59, 0.95);
+
+ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+li {
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+li:last-child {
+  border-bottom: none;
 }
 
 button {
   padding: 6px 12px;
-  margin: 4px;
-  border: none;
+  margin-left: 8px;
   border-radius: 8px;
+  border: none;
   background: linear-gradient(90deg, #6366f1, #8b5cf6);
   color: #fff;
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.15s ease, opacity 0.15s ease;
 }
-button:hover { transform: scale(1.05); opacity: 0.9; }
-button:active { transform: scale(0.95); }
-.reset-btn { background: linear-gradient(90deg, #ef4444, #f87171); }
 
-ul { margin: 0; padding-left: 18px; }
-
-.day {
-  background: rgba(255,255,255,0.05);
-  border-radius: 8px;
-  padding: 10px 12px;
-  margin: 6px 0;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-.day:hover { background: rgba(99,102,241,0.15); }
-
-.day h3 {
-  margin: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 600;
+button:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
 }
 
-.day-details {
-  max-height: 0;
-  overflow: hidden;
-  transition: all 0.5s cubic-bezier(.25,.8,.25,1);
-  opacity: 0;
+button:active {
+  transform: scale(0.95);
 }
-.day-details.open {
-  opacity: 1;
-  max-height: 300px;
+
+.reset-btn {
+  background: linear-gradient(90deg, #ef4444, #f87171);
   margin-top: 10px;
 }
 
@@ -113,95 +101,139 @@ ul { margin: 0; padding-left: 18px; }
   font-size: 2em;
   font-weight: bold;
   color: #a5b4fc;
+  letter-spacing: 1px;
+}
+
+.progress-container {
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  height: 12px;
+  width: 100%;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.progress-bar {
+  height: 12px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  width: 0%;
+  transition: width 0.4s ease;
+  border-radius: 10px;
 }
 
 footer {
   margin-top: auto;
   padding: 12px;
-  opacity: 0.6;
   font-size: 0.9em;
+  opacity: 0.6;
 }
-.progress-bar {
-  height: 12px;
-  background: rgba(99,102,241,0.2);
-  border-radius: 6px;
+
+.day {
+  padding: 10px;
+  margin: 6px 0;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.day:hover {
+  background: rgba(99,102,241,0.15);
+}
+
+.day h3 {
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+}
+
+.day-details {
+  max-height: 0;
   overflow: hidden;
-  margin-top: 6px;
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(.25,.8,.25,1);
 }
-.progress-inner {
-  height: 100%;
-  background: linear-gradient(90deg, #6366f1, #8b5cf6);
-  width: 0%;
-  border-radius: 6px;
-  transition: width 0.6s ease-in-out;
+
+.day-details.open {
+  max-height: 300px;
+  opacity: 1;
+  margin-top: 8px;
 }
-.streak {
-  font-size: 1.4em;
-  font-weight: 700;
-  color: #facc15;
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
 </head>
 <body>
 <h1>🏔️ Programme Escalade & Musculation</h1>
 
-<!-- 📆 CALENDRIER INTERACTIF -->
-<div class="card" id="calendar_card">
-  <h2>🗓️ Calendrier hebdomadaire</h2>
+<!-- Calendrier interactif -->
+<div class="card">
+  <h2>🗓️ Calendrier</h2>
   <div id="calendar"></div>
 </div>
 
-<!-- 🔥 SEANCE DU JOUR -->
-<div class="card" id="today_card">
-  <h2>💪 Séance du jour</h2>
-  <ul id="today_list"></ul>
+<!-- Détail de la séance du jour -->
+<div class="card" id="daily_session_card">
+  <h2 id="session_title">💪 Séance du jour</h2>
+  <ul id="session_list"></ul>
+  <button class="reset-btn" onclick="reset()">🔄 Reset séries</button>
+  <button style="margin-top:10px;" onclick="markSessionDone()">✅ Séance terminée</button>
 </div>
 
-<!-- 📈 PROGRESSION MENSUELLE -->
-<div class="card">
-  <h2>📊 Progression mensuelle</h2>
-  <p id="progress_percent">0%</p>
-  <div class="progress-bar"><div class="progress-inner" id="progress_inner"></div></div>
+<!-- Progression mensuelle et streak -->
+<div class="card" id="progress_card">
+  <h2>📈 Progression</h2>
+  <p>Semaine : <span id="week_progress_text"></span></p>
+  <div class="progress-container"><div class="progress-bar" id="week_progress_bar"></div></div>
+  <p style="margin-top:8px;">Mois : <span id="month_progress_text"></span></p>
+  <div class="progress-container"><div class="progress-bar" id="month_progress_bar"></div></div>
+  <p style="margin-top:12px;">🔥 Streak : <span id="streak_value">0</span> jours consécutifs</p>
 </div>
 
-<!-- 🔥 STREAK -->
-<div class="card">
-  <h2>🔥 Streak</h2>
-  <p id="streak_display" class="streak">0 jours</p>
-</div>
-
-<!-- ⏱️ MINUTEUR -->
+<!-- Minuteur global -->
 <div class="card">
   <h2>⏱️ Minuteur global</h2>
   <p><span id="timer_display">00:00</span></p>
-  <button onclick="startTimer()">▶ Start</button>
-  <button onclick="stopTimer()">⏸ Stop</button>
-  <button onclick="resetTimer()" class="reset-btn">🔁 Reset</button>
+  <div>
+    <button onclick="startTimer()">▶ Start</button>
+    <button onclick="stopTimer()">⏸ Stop</button>
+    <button onclick="resetTimer()" class="reset-btn">🔁 Reset</button>
+  </div>
 </div>
 
-<footer>© 2025 Léo EGGENSCHWILLER • Stay Strong 💥</footer>
+<footer>© 2025 Escalade Trainer • Stay Strong 💥</footer>
 
 <script>
-// --- PROGRAMME ---
+// --- Programme hebdomadaire ---
 const programme = {
-  Lundi: { title: "Poussée + Core", ex: ["Pompes classiques — 3×10", "Planche — 3×40s", "Dips — 3×8"] },
-  Mardi: { title: "Tirage + Grip", ex: ["Tractions — 3×8", "Suspension sur poutre — 3×20s", "Rowing inversé — 3×10"] },
-  Mercredi: { title: "Jambes + Explosivité", ex: ["Squats sautés — 3×12", "Fentes — 3×10", "Montées de genoux — 3×30s"] },
-  Jeudi: { title: "Haut du corps + Doigts", ex: ["Pompes serrées — 3×10", "Suspension 3 doigts — 4×10s", "Gainage latéral — 3×30s"] },
+  Lundi: { title: "Poussée + Core", ex: ["Pompes classiques — 3×8-10", "Planche — 3×30-40s", "Dips sur chaise — 3×10"] },
+  Mardi: { title: "Tirage + Grip", ex: ["Tractions — 3×6-8", "Suspensions sur poutre — 3×20s", "Rowing inversé — 3×10"] },
+  Mercredi: { title: "Jambes + Explosivité", ex: ["Squats sautés — 3×12", "Fentes — 3×10", "Montées de genoux dynamiques — 3×30s"] },
+  Jeudi: { title: "Haut du corps + Doigts", ex: ["Pompes serrées — 3×10", "Suspension 3 doigts — 4×10s", "Gainage latéral — 3×30s / côté"] },
   Vendredi: { title: "Tirage + Core", ex: ["Tractions australiennes — 3×10", "Crunchs — 3×20", "Planche latérale — 3×30s"] },
   Samedi: { title: "Repos actif", ex: ["Étirements", "Mobilité", "Yoga doux"] },
-  Dimanche: { title: "Repos total", ex: ["Hydratation", "Préparation semaine", "Sieste 😴"] }
+  Dimanche: { title: "Repos total", ex: ["Hydratation", "Préparation semaine", "Sieste 😌"] }
 };
 
-// --- CALENDRIER INTERACTIF ---
+// --- Calendrier interactif ---
 const calendar = document.getElementById('calendar');
+const todayName = new Date().toLocaleDateString('fr-FR', { weekday: 'long' });
 for (const [day, data] of Object.entries(programme)) {
   const d = document.createElement('div');
   d.className = 'day';
+  const isToday = day === todayName.charAt(0).toUpperCase() + todayName.slice(1);
   d.innerHTML = `<h3>${day} <span style="font-size:.9em;opacity:.7;">${data.title}</span></h3>
-    <div class="day-details"><ul>${data.ex.map(e=>`<li>${e}</li>`).join('')}</ul></div>`;
+                 <div class="day-details ${isToday?'open':''}">
+                   <ul>${data.ex.map(e=>`<li>${e}</li>`).join('')}</ul>
+                 </div>`;
   calendar.appendChild(d);
 }
+
+// --- Menu déroulant du calendrier ---
 const days = document.querySelectorAll('.day');
 days.forEach(day=>{
   day.addEventListener('click',()=>{
@@ -212,33 +244,79 @@ days.forEach(day=>{
   });
 });
 
-// --- SEANCE DU JOUR ---
-const todayName = new Date().toLocaleDateString('fr-FR', { weekday: 'long' });
-const capitalized = todayName.charAt(0).toUpperCase() + todayName.slice(1);
-const todayData = programme[capitalized];
-if (todayData) {
-  document.getElementById('today_list').innerHTML = todayData.ex.map(e=>`<li>${e}</li>`).join('');
+// --- Séance du jour ---
+const sessionList = document.getElementById('session_list');
+const title = document.getElementById('session_title');
+const todayData = programme[todayName.charAt(0).toUpperCase() + todayName.slice(1)];
+if(todayData){
+  title.textContent = `💪 Séance du jour (${todayData.title})`;
+  todayData.ex.forEach(ex=>{
+    const li = document.createElement('li');
+    li.textContent = ex;
+    sessionList.appendChild(li);
+  });
+} else {
+  title.textContent = "😌 Jour de repos / étirements";
+  sessionList.innerHTML = "<li>Profite pour récupérer et t’étirer !</li>";
 }
 
-// --- STREAK ---
-let streak = parseInt(localStorage.getItem('streak')||'0');
-let lastDay = localStorage.getItem('lastDay');
-const today = new Date().toDateString();
-if (lastDay !== today) {
-  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
-  if (lastDay === yesterday.toDateString()) streak++; else streak = 1;
-  localStorage.setItem('streak', streak);
-  localStorage.setItem('lastDay', today);
+// --- Progression et streak ---
+function markSessionDone(){
+  const today = new Date().toISOString().split('T')[0];
+  let history = JSON.parse(localStorage.getItem('sessions_done')||'[]');
+  if(!history.includes(today)){
+    history.push(today);
+    localStorage.setItem('sessions_done', JSON.stringify(history));
+  }
+  updateProgress();
 }
-document.getElementById('streak_display').textContent = `${streak} jour${streak>1?'s':''}`;
 
-// --- PROGRESSION MENSUELLE ---
-const now = new Date();
-const monthProgress = Math.round((now.getDate()/new Date(now.getFullYear(), now.getMonth()+1, 0).getDate())*100);
-document.getElementById('progress_percent').textContent = monthProgress+"%";
-document.getElementById('progress_inner').style.width = monthProgress+"%";
+function updateProgress(){
+  const history = JSON.parse(localStorage.getItem('sessions_done')||'[]');
+  const today = new Date();
+  
+  // Week progress
+  const yearWeek = (d=>{
+    const oneJan=new Date(d.getFullYear(),0,1);
+    const numberOfDays=Math.floor((d-oneJan)/(24*60*60*1000));
+    return Math.ceil((numberOfDays + oneJan.getDay()+1)/7);
+  })(today);
+  
+  const weekSessions = history.filter(date=>{
+    const d = new Date(date);
+    const week = (d=>{
+      const oneJan = new Date(d.getFullYear(),0,1);
+      const numberOfDays = Math.floor((d-oneJan)/(24*60*60*1000));
+      return Math.ceil((numberOfDays + oneJan.getDay()+1)/7);
+    })(d);
+    return week === yearWeek;
+  }).length;
+  
+  const weekProgress = Math.min((weekSessions/5)*100,100);
+  document.getElementById('week_progress_bar').style.width = weekProgress+'%';
+  document.getElementById('week_progress_text').textContent = `${weekSessions}/5 séances`;
+  
+  // Month progress
+  const month = today.getMonth();
+  const monthSessions = history.filter(date => new Date(date).getMonth() === month).length;
+  const monthDays = new Date(today.getFullYear(), month+1,0).getDate();
+  const monthProgress = Math.min((monthSessions/(monthDays/2))*100,100);
+  document.getElementById('month_progress_bar').style.width = monthProgress+'%';
+  document.getElementById('month_progress_text').textContent = `${monthSessions} séances`;
+  
+  // Streak
+  let streak = 0;
+  let checkDate = new Date(today);
+  while(history.includes(checkDate.toISOString().split('T')[0])){
+    streak++;
+    checkDate.setDate(checkDate.getDate()-1);
+  }
+  document.getElementById('streak_value').textContent = streak;
+}
 
-// --- MINUTEUR ---
+updateProgress();
+
+// --- Minuteur global ---
 let timerInterval;
 let timerSeconds = parseInt(localStorage.getItem('timerSeconds')||'0');
 const display = document.getElementById('timer_display');
@@ -251,7 +329,7 @@ function startTimer(){
   if(timerInterval) return;
   timerInterval=setInterval(()=>{
     timerSeconds++;
-    localStorage.setItem('timerSeconds',timerSeconds);
+    localStorage.setItem('timerSeconds', timerSeconds);
     updateDisplay();
   },1000);
 }
