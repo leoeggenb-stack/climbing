@@ -1,18 +1,104 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Programme Escalade — App</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Escalade Trainer">
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <style>body{font-family:Arial,sans-serif;margin:0;padding:0;background:#0f1724;color:#fff;}h1,h2,h3,h4{margin:0;padding:0.3em;}</style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Programme Escalade — App</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Escalade Trainer">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+body{font-family:Arial,sans-serif;margin:0;padding:0;background:#0f1724;color:#fff;}
+h1,h2,h3{margin:0;padding:.3em;}
+.card{padding:12px;background:#0b1220;border-radius:10px;margin:8px;}
+button{padding:6px 10px;margin:2px;border-radius:6px;border:none;background:#4f46e5;color:#fff;cursor:pointer;}
+</style>
 </head>
 <body>
 <h1>Programme Escalade & Musculation</h1>
-<p>Contenu de la PWA ici...</p>
+
+<div class="card">
+<h2>Calendrier</h2>
+<p>Semaine avec séances :</p>
+<ul>
+<li>Lundi : Poussée + Core</li>
+<li>Mardi : Tirage + Grip</li>
+<li>Mercredi : Jambes + Explosivité</li>
+<li>Jeudi : Haut du corps + Doigts</li>
+<li>Vendredi : Tirage + Core</li>
+</ul>
+</div>
+
+<div class="card">
+<h2>Exemple de séance (Lundi)</h2>
+<ul>
+<li>Pompes classiques - 3 séries de 8-10 reps <button onclick="inc('push')">+</button><span id="push_count">0</span></li>
+<li>Planche - 3 séries de 30-40s <button onclick="inc('plank')">+</button><span id="plank_count">0</span></li>
+<li>Squats - 3 séries de 12 reps <button onclick="inc('squat')">+</button><span id="squat_count">0</span></li>
+</ul>
+<button onclick="reset()">Reset séries</button>
+</div>
+
+<div class="card">
+<h2>Minuteur global</h2>
+<p><span id="timer_display">00:00</span></p>
+<button onclick="startTimer()">Start</button>
+<button onclick="stopTimer()">Stop</button>
+<button onclick="resetTimer()">Reset</button>
+</div>
+
+<script>
+// Compteurs de séries
+function inc(ex){
+    let e = document.getElementById(ex+'_count');
+    let v = parseInt(e.textContent || '0');
+    e.textContent = v+1;
+    localStorage.setItem(ex, v+1);
+}
+
+// Charger valeurs sauvegardées
+['push','plank','squat'].forEach(ex=>{
+    let val = localStorage.getItem(ex);
+    if(val) document.getElementById(ex+'_count').textContent = val;
+});
+
+function reset(){
+    ['push','plank','squat'].forEach(ex=>{
+        document.getElementById(ex+'_count').textContent='0';
+        localStorage.removeItem(ex);
+    });
+}
+
+// Minuteur global
+let timerInterval;
+let timerSeconds = parseInt(localStorage.getItem('timerSeconds')||'0');
+const display = document.getElementById('timer_display');
+function updateDisplay(){
+    let m = Math.floor(timerSeconds/60);
+    let s = timerSeconds % 60;
+    display.textContent = (m<10?'0':'')+m+":"+(s<10?'0':'')+s;
+}
+updateDisplay();
+
+function startTimer(){
+    if(timerInterval) return;
+    timerInterval = setInterval(()=>{
+        timerSeconds++;
+        localStorage.setItem('timerSeconds', timerSeconds);
+        updateDisplay();
+    },1000);
+}
+function stopTimer(){
+    clearInterval(timerInterval);
+    timerInterval = null;
+}
+function resetTimer(){
+    timerSeconds=0;
+    updateDisplay();
+    localStorage.removeItem('timerSeconds');
+}
+</script>
 </body>
 </html>
