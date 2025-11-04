@@ -91,6 +91,11 @@ button:active {
   transform: scale(0.95);
 }
 
+.reset-btn {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+  margin-top: 10px;
+}
+
 #timer_display {
   font-size: 2em;
   font-weight: bold;
@@ -98,9 +103,20 @@ button:active {
   letter-spacing: 1px;
 }
 
-.reset-btn {
-  background: linear-gradient(90deg, #ef4444, #f87171);
-  margin-top: 10px;
+.progress-container {
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  height: 12px;
+  width: 100%;
+  overflow: hidden;
+  margin-top: 6px;
+}
+.progress-bar {
+  height: 12px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  width: 0%;
+  transition: width 0.4s ease;
+  border-radius: 10px;
 }
 
 footer {
@@ -121,39 +137,30 @@ footer {
 
 <div class="card">
   <h2>🗓️ Calendrier</h2>
-  <p>Semaine avec séances :</p>
   <ul>
     <li>Lundi : Poussée + Core</li>
     <li>Mardi : Tirage + Grip</li>
     <li>Mercredi : Jambes + Explosivité</li>
     <li>Jeudi : Haut du corps + Doigts</li>
     <li>Vendredi : Tirage + Core</li>
+    <li>Samedi & Dimanche : Repos / Étirements</li>
   </ul>
 </div>
 
-<div class="card">
-  <h2>💪 Exemple de séance (Lundi)</h2>
-  <ul>
-    <li>Pompes classiques — 3×8-10 reps 
-      <span>
-        <button onclick="inc('push')">+</button>
-        <span id="push_count">0</span>
-      </span>
-    </li>
-    <li>Planche — 3×30-40s 
-      <span>
-        <button onclick="inc('plank')">+</button>
-        <span id="plank_count">0</span>
-      </span>
-    </li>
-    <li>Squats — 3×12 reps 
-      <span>
-        <button onclick="inc('squat')">+</button>
-        <span id="squat_count">0</span>
-      </span>
-    </li>
-  </ul>
+<div class="card" id="daily_session_card">
+  <h2 id="session_title">💪 Séance du jour</h2>
+  <ul id="session_list"></ul>
   <button class="reset-btn" onclick="reset()">🔄 Reset séries</button>
+  <button style="margin-top:10px;" onclick="markSessionDone()">✅ Séance terminée</button>
+</div>
+
+<div class="card" id="progress_card">
+  <h2>📈 Progression</h2>
+  <p>Semaine : <span id="week_progress_text"></span></p>
+  <div class="progress-container"><div class="progress-bar" id="week_progress_bar"></div></div>
+  <p style="margin-top:8px;">Mois : <span id="month_progress_text"></span></p>
+  <div class="progress-container"><div class="progress-bar" id="month_progress_bar"></div></div>
+  <p style="margin-top:12px;">🔥 Streak : <span id="streak_value">0</span> jours consécutifs</p>
 </div>
 
 <div class="card">
@@ -169,7 +176,60 @@ footer {
 <footer>© 2025 Escalade Trainer • Stay Strong 💥</footer>
 
 <script>
-// Compteurs de séries
+// --- Programme hebdomadaire ---
+const programme = {
+  1: { title: "Poussée + Core", exercices: [
+      {name: "Pompes classiques", series: "3×8-10"},
+      {name: "Planche", series: "3×30-40s"},
+      {name: "Dips sur chaise", series: "3×10"}
+  ]},
+  2: { title: "Tirage + Grip", exercices: [
+      {name: "Tractions", series: "3×6-8"},
+      {name: "Suspensions sur poutre", series: "3×20s"},
+      {name: "Rowing inversé", series: "3×10"}
+  ]},
+  3: { title: "Jambes + Explosivité", exercices: [
+      {name: "Squats sautés", series: "3×12"},
+      {name: "Fentes", series: "3×10"},
+      {name: "Montées de genoux dynamiques", series: "3×30s"}
+  ]},
+  4: { title: "Haut du corps + Doigts", exercices: [
+      {name: "Pompes serrées", series: "3×10"},
+      {name: "Suspension 3 doigts", series: "4×10s"},
+      {name: "Gainage latéral", series: "3×30s / côté"}
+  ]},
+  5: { title: "Tirage + Core", exercices: [
+      {name: "Tractions australiennes", series: "3×10"},
+      {name: "Crunchs", series: "3×20"},
+      {name: "Planche latérale", series: "3×30s"}
+  ]}
+};
+
+// --- Afficher la séance du jour ---
+const day = new Date().getDay(); // 0=Dimanche, 1=Lundi...
+const sessionList = document.getElementById('session_list');
+const title = document.getElementById('session_title');
+
+if (programme[day]) {
+  const s = programme[day];
+  title.textContent = `💪 Séance du jour (${s.title})`;
+
+  s.exercices.forEach(ex => {
+    const exId = ex.name.replace(/\s+/g,'_').toLowerCase();
+    const li = document.createElement('li');
+    li.innerHTML = `${ex.name} — ${ex.series} 
+      <span>
+        <button onclick="inc('${exId}')">+</button>
+        <span id="${exId}_count">${localStorage.getItem(exId) || 0}</span>
+      </span>`;
+    sessionList.appendChild(li);
+  });
+} else {
+  title.textContent = "😌 Jour de repos / étirements";
+  sessionList.innerHTML = "<li>Profite pour récupérer et t’étirer !</li>";
+}
+
+// --- Compteurs de séries ---
 function inc(ex){
   let e = document.getElementById(ex+'_count');
   let v = parseInt(e.textContent || '0');
@@ -177,20 +237,69 @@ function inc(ex){
   localStorage.setItem(ex, v+1);
 }
 
-// Charger valeurs sauvegardées
-['push','plank','squat'].forEach(ex=>{
-  let val = localStorage.getItem(ex);
-  if(val) document.getElementById(ex+'_count').textContent = val;
-});
-
 function reset(){
-  ['push','plank','squat'].forEach(ex=>{
-    document.getElementById(ex+'_count').textContent='0';
-    localStorage.removeItem(ex);
+  const spans = document.querySelectorAll('[id$="_count"]');
+  spans.forEach(sp=>{
+    sp.textContent = '0';
+    localStorage.removeItem(sp.id.replace('_count',''));
   });
 }
 
-// Minuteur global
+// --- Progression, mois et streak ---
+function markSessionDone(){
+  const today = new Date().toISOString().split('T')[0];
+  let history = JSON.parse(localStorage.getItem('sessions_done') || '[]');
+  if(!history.includes(today)){
+    history.push(today);
+    localStorage.setItem('sessions_done', JSON.stringify(history));
+  }
+  updateProgress();
+}
+
+function updateProgress(){
+  const history = JSON.parse(localStorage.getItem('sessions_done') || '[]');
+  const today = new Date();
+  const yearWeek = (d => {
+    const oneJan = new Date(d.getFullYear(),0,1);
+    const numberOfDays = Math.floor((d - oneJan) / (24 * 60 * 60 * 1000));
+    return Math.ceil((numberOfDays + oneJan.getDay()+1) / 7);
+  })(today);
+
+  // Week progress
+  const weekSessions = history.filter(date => {
+    const d = new Date(date);
+    const week = (d => {
+      const oneJan = new Date(d.getFullYear(),0,1);
+      const numberOfDays = Math.floor((d - oneJan) / (24 * 60 * 60 * 1000));
+      return Math.ceil((numberOfDays + oneJan.getDay()+1) / 7);
+    })(d);
+    return week === yearWeek;
+  }).length;
+  const weekProgress = Math.min((weekSessions / 5) * 100, 100);
+  document.getElementById('week_progress_bar').style.width = weekProgress + '%';
+  document.getElementById('week_progress_text').textContent = `${weekSessions}/5 séances`;
+
+  // Month progress
+  const month = today.getMonth();
+  const monthSessions = history.filter(date => new Date(date).getMonth() === month).length;
+  const monthDays = new Date(today.getFullYear(), month+1, 0).getDate();
+  const monthProgress = Math.min((monthSessions / (monthDays/2)) * 100, 100);
+  document.getElementById('month_progress_bar').style.width = monthProgress + '%';
+  document.getElementById('month_progress_text').textContent = `${monthSessions} séances`;
+
+  // Streak
+  let streak = 0;
+  let checkDate = new Date(today);
+  while(history.includes(checkDate.toISOString().split('T')[0])){
+    streak++;
+    checkDate.setDate(checkDate.getDate()-1);
+  }
+  document.getElementById('streak_value').textContent = streak;
+}
+
+updateProgress();
+
+// --- Minuteur global ---
 let timerInterval;
 let timerSeconds = parseInt(localStorage.getItem('timerSeconds')||'0');
 const display = document.getElementById('timer_display');
