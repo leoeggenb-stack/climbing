@@ -4,7 +4,6 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>Programme Escalade — App</title>
-<link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Escalade Trainer">
@@ -208,26 +207,53 @@ footer {
 <footer>© 2025 Escalade Trainer • Stay Strong 💥</footer>
 
 <script>
-// --- Programme hebdomadaire ---
+// --- Programme hebdomadaire adapté chambre étudiante ---
 const programme = {
-  Lundi: { title: "Poussée + Core", ex: ["Pompes classiques — 3×8-10", "Planche — 3×30-40s", "Dips sur chaise — 3×10"] },
-  Mardi: { title: "Tirage + Grip", ex: ["Tractions — 3×6-8", "Suspensions sur poutre — 3×20s", "Rowing inversé — 3×10"] },
-  Mercredi: { title: "Jambes + Explosivité", ex: ["Squats sautés — 3×12", "Fentes — 3×10", "Montées de genoux dynamiques — 3×30s"] },
-  Jeudi: { title: "Haut du corps + Doigts", ex: ["Pompes serrées — 3×10", "Suspension 3 doigts — 4×10s", "Gainage latéral — 3×30s / côté"] },
-  Vendredi: { title: "Tirage + Core", ex: ["Tractions australiennes — 3×10", "Crunchs — 3×20", "Planche latérale — 3×30s"] },
-  Samedi: { title: "Repos actif", ex: ["Étirements", "Mobilité", "Yoga doux"] },
-  Dimanche: { title: "Repos total", ex: ["Hydratation", "Préparation semaine", "Sieste 😌"] }
+  Lundi: { title: "Poussée + Core", ex: [
+    "Pompes classiques — 4×10-12", 
+    "Pompes diamant — 3×8", 
+    "Planche — 3×40s", 
+    "Dips sur chaise — 3×12"
+  ]},
+  Mardi: { title: "Tirage + Grip", ex: [
+    "Tractions australiennes (sous table) — 4×8", 
+    "Suspension sur barre de porte — 3×15s", 
+    "Curl biceps avec sac lourd — 3×12"
+  ]},
+  Mercredi: { title: "Jambes + Explosivité", ex: [
+    "Squats sautés — 4×12", 
+    "Fentes — 3×12 par jambe", 
+    "Montées de genoux — 3×30s"
+  ]},
+  Jeudi: { title: "Haut du corps + Doigts", ex: [
+    "Pompes serrées — 4×10", 
+    "Suspension 3 doigts (porte) — 4×10s", 
+    "Gainage latéral — 3×30s / côté"
+  ]},
+  Vendredi: { title: "Tirage + Core", ex: [
+    "Tractions australiennes — 4×10", 
+    "Crunchs — 3×20", 
+    "Planche latérale — 3×30s"
+  ]},
+  Samedi: { title: "Repos actif", ex: [
+    "Étirements", 
+    "Mobilité", 
+    "Yoga doux"
+  ]},
+  Dimanche: { title: "Repos total", ex: [
+    "Hydratation", 
+    "Préparation semaine", 
+    "Sieste 😌"
+  ]}
 };
 
 // --- Calendrier interactif ---
 const calendar = document.getElementById('calendar');
-const todayName = new Date().toLocaleDateString('fr-FR', { weekday: 'long' });
 for (const [day, data] of Object.entries(programme)) {
   const d = document.createElement('div');
   d.className = 'day';
-  const isToday = day === todayName.charAt(0).toUpperCase() + todayName.slice(1);
   d.innerHTML = `<h3>${day} <span style="font-size:.9em;opacity:.7;">${data.title}</span></h3>
-                 <div class="day-details ${isToday?'open':''}">
+                 <div class="day-details">
                    <ul>${data.ex.map(e=>`<li>${e}</li>`).join('')}</ul>
                  </div>`;
   calendar.appendChild(d);
@@ -247,6 +273,7 @@ days.forEach(day=>{
 // --- Séance du jour ---
 const sessionList = document.getElementById('session_list');
 const title = document.getElementById('session_title');
+const todayName = new Date().toLocaleDateString('fr-FR', { weekday: 'long' });
 const todayData = programme[todayName.charAt(0).toUpperCase() + todayName.slice(1)];
 if(todayData){
   title.textContent = `💪 Séance du jour (${todayData.title})`;
@@ -274,8 +301,7 @@ function markSessionDone(){
 function updateProgress(){
   const history = JSON.parse(localStorage.getItem('sessions_done')||'[]');
   const today = new Date();
-  
-  // Week progress
+  // semaine
   const yearWeek = (d=>{
     const oneJan=new Date(d.getFullYear(),0,1);
     const numberOfDays=Math.floor((d-oneJan)/(24*60*60*1000));
@@ -296,7 +322,7 @@ function updateProgress(){
   document.getElementById('week_progress_bar').style.width = weekProgress+'%';
   document.getElementById('week_progress_text').textContent = `${weekSessions}/5 séances`;
   
-  // Month progress
+  // mois
   const month = today.getMonth();
   const monthSessions = history.filter(date => new Date(date).getMonth() === month).length;
   const monthDays = new Date(today.getFullYear(), month+1,0).getDate();
@@ -304,7 +330,7 @@ function updateProgress(){
   document.getElementById('month_progress_bar').style.width = monthProgress+'%';
   document.getElementById('month_progress_text').textContent = `${monthSessions} séances`;
   
-  // Streak
+  // streak
   let streak = 0;
   let checkDate = new Date(today);
   while(history.includes(checkDate.toISOString().split('T')[0])){
