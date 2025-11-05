@@ -4,6 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>Programme Escalade — App</title>
+<link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Escalade Trainer">
@@ -207,48 +208,21 @@ footer {
 <footer>© 2025 Escalade Trainer • Stay Strong 💥</footer>
 
 <script>
-// --- Programme hebdomadaire adapté chambre étudiante ---
+// --- Programme hebdomadaire adapté à toi ---
+// 18 ans, 60kg, 1m80, chambre étudiante, objectif : masse & force escalade
 const programme = {
-  Lundi: { title: "Poussée + Core", ex: [
-    "Pompes classiques — 4×10-12", 
-    "Pompes diamant — 3×8", 
-    "Planche — 3×40s", 
-    "Dips sur chaise — 3×12"
-  ]},
-  Mardi: { title: "Tirage + Grip", ex: [
-    "Tractions australiennes (sous table) — 4×8", 
-    "Suspension sur barre de porte — 3×15s", 
-    "Curl biceps avec sac lourd — 3×12"
-  ]},
-  Mercredi: { title: "Jambes + Explosivité", ex: [
-    "Squats sautés — 4×12", 
-    "Fentes — 3×12 par jambe", 
-    "Montées de genoux — 3×30s"
-  ]},
-  Jeudi: { title: "Haut du corps + Doigts", ex: [
-    "Pompes serrées — 4×10", 
-    "Suspension 3 doigts (porte) — 4×10s", 
-    "Gainage latéral — 3×30s / côté"
-  ]},
-  Vendredi: { title: "Tirage + Core", ex: [
-    "Tractions australiennes — 4×10", 
-    "Crunchs — 3×20", 
-    "Planche latérale — 3×30s"
-  ]},
-  Samedi: { title: "Repos actif", ex: [
-    "Étirements", 
-    "Mobilité", 
-    "Yoga doux"
-  ]},
-  Dimanche: { title: "Repos total", ex: [
-    "Hydratation", 
-    "Préparation semaine", 
-    "Sieste 😌"
-  ]}
+  Lundi: { title: "Poussée + Core", ex: ["Pompes lestées si possible — 4×10-12", "Planche — 4×40s", "Dips sur chaise — 4×12"] },
+  Mardi: { title: "Tirage + Grip", ex: ["Tractions australiennes ou sur barre — 4×6-10", "Suspension sur prises maison — 4×20s", "Rowing inversé sous table — 4×10"] },
+  Mercredi: { title: "Jambes + Explosivité", ex: ["Squats — 4×15", "Fentes avant — 4×12", "Montées de genoux dynamiques — 4×30s"] },
+  Jeudi: { title: "Haut du corps + Doigts", ex: ["Pompes serrées — 4×12", "Suspension 3 doigts — 4×12s", "Gainage latéral — 4×40s / côté"] },
+  Vendredi: { title: "Tirage + Core", ex: ["Tractions australiennes — 4×10", "Crunchs — 4×20", "Planche latérale — 4×40s"] },
+  Samedi: { title: "Repos actif", ex: ["Étirements", "Mobilité", "Yoga doux"] },
+  Dimanche: { title: "Repos total", ex: ["Hydratation", "Préparation semaine", "Sieste 😌"] }
 };
 
 // --- Calendrier interactif ---
 const calendar = document.getElementById('calendar');
+const todayName = new Date().toLocaleDateString('fr-FR', { weekday: 'long' });
 for (const [day, data] of Object.entries(programme)) {
   const d = document.createElement('div');
   d.className = 'day';
@@ -273,7 +247,6 @@ days.forEach(day=>{
 // --- Séance du jour ---
 const sessionList = document.getElementById('session_list');
 const title = document.getElementById('session_title');
-const todayName = new Date().toLocaleDateString('fr-FR', { weekday: 'long' });
 const todayData = programme[todayName.charAt(0).toUpperCase() + todayName.slice(1)];
 if(todayData){
   title.textContent = `💪 Séance du jour (${todayData.title})`;
@@ -301,7 +274,8 @@ function markSessionDone(){
 function updateProgress(){
   const history = JSON.parse(localStorage.getItem('sessions_done')||'[]');
   const today = new Date();
-  // semaine
+  
+  // Week progress
   const yearWeek = (d=>{
     const oneJan=new Date(d.getFullYear(),0,1);
     const numberOfDays=Math.floor((d-oneJan)/(24*60*60*1000));
@@ -322,7 +296,7 @@ function updateProgress(){
   document.getElementById('week_progress_bar').style.width = weekProgress+'%';
   document.getElementById('week_progress_text').textContent = `${weekSessions}/5 séances`;
   
-  // mois
+  // Month progress
   const month = today.getMonth();
   const monthSessions = history.filter(date => new Date(date).getMonth() === month).length;
   const monthDays = new Date(today.getFullYear(), month+1,0).getDate();
@@ -330,7 +304,7 @@ function updateProgress(){
   document.getElementById('month_progress_bar').style.width = monthProgress+'%';
   document.getElementById('month_progress_text').textContent = `${monthSessions} séances`;
   
-  // streak
+  // Streak
   let streak = 0;
   let checkDate = new Date(today);
   while(history.includes(checkDate.toISOString().split('T')[0])){
@@ -368,6 +342,39 @@ function resetTimer(){
   updateDisplay();
   localStorage.removeItem('timerSeconds');
 }
+
+// --- Notifications quotidiennes ---
+if ('Notification' in window) {
+  Notification.requestPermission();
+}
+
+function sendReminder() {
+  if (Notification.permission === "granted") {
+    new Notification("💪 Escalade Trainer", {
+      body: "Tu n'as pas encore fait ta séance aujourd'hui !",
+      icon: "icon-192.png"
+    });
+  }
+}
+
+function scheduleDailyReminder() {
+  const now = new Date();
+  const reminderTime = new Date();
+  reminderTime.setHours(1,11,0,0); // 18h00
+
+  let timeout = reminderTime - now;
+  if (timeout < 0) timeout += 24*60*60*1000; // planifier pour demain si l'heure est passée
+
+  setTimeout(()=>{
+    const today = new Date().toISOString().split('T')[0];
+    let history = JSON.parse(localStorage.getItem('sessions_done')||'[]');
+    if(!history.includes(today)) sendReminder();
+    scheduleDailyReminder(); // répète chaque jour
+  }, timeout);
+}
+
+scheduleDailyReminder();
+
 </script>
 </body>
 </html>
