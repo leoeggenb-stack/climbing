@@ -360,7 +360,7 @@ function sendReminder() {
 function scheduleDailyReminder() {
   const now = new Date();
   const reminderTime = new Date();
-  reminderTime.setHours(1,11,0,0); // 18h00
+  reminderTime.setHours(18,0,0,0); // 18h00
 
   let timeout = reminderTime - now;
   if (timeout < 0) timeout += 24*60*60*1000; // planifier pour demain si l'heure est passée
