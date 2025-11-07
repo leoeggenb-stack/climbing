@@ -4,40 +4,39 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>Programme Escalade — App</title>
-<link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Escalade Trainer">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-body { font-family: 'Inter', sans-serif; margin: 0; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); background: linear-gradient(135deg,#0f172a 0%,#1e293b 100%); color:#f8fafc; min-height:100vh; display:flex; flex-direction:column; align-items:center; }
-h1{ text-align:center; font-weight:700; font-size:1.8em; margin:1em 0 0.5em 0; color:#a5b4fc; letter-spacing:1px; }
-h2{ font-size:1.2em; margin-bottom:0.4em; color:#c7d2fe; }
-.card{ width:90%; max-width:500px; background:rgba(15,23,42,0.8); border:1px solid rgba(99,102,241,0.2); border-radius:14px; margin:12px 0; padding:16px; box-shadow:0 4px 20px rgba(0,0,0,0.25); backdrop-filter: blur(10px); animation:fadeIn 0.6s ease; }
-ul{ list-style:none; padding-left:0; margin:0; }
-li{ padding:8px 0; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); cursor:pointer; transition:background 0.2s; }
-li:hover{ background: rgba(99,102,241,0.12); }
-li:last-child{ border-bottom:none; }
-button{ padding:6px 12px; margin-left:8px; border-radius:8px; border:none; background:linear-gradient(90deg,#6366f1,#8b5cf6); color:#fff; font-weight:600; cursor:pointer; transition:transform .15s ease, opacity .15s ease; }
-button:hover{ transform:scale(1.05); opacity:0.95; }
-.reset-btn{ background:linear-gradient(90deg,#ef4444,#f87171); margin-top:10px; }
-#timer_display{ font-size:2em; font-weight:bold; color:#a5b4fc; letter-spacing:1px; }
-.progress-container{ background:rgba(255,255,255,0.1); border-radius:10px; height:12px; width:100%; overflow:hidden; margin-top:6px; }
-.progress-bar{ height:12px; background:linear-gradient(90deg,#6366f1,#8b5cf6); width:0%; transition:width .4s ease; border-radius:10px; }
-footer{ margin-top:auto; padding:12px; font-size:.9em; opacity:.6; }
-.day{ padding:10px; margin:6px 0; border-radius:8px; background:rgba(255,255,255,0.05); cursor:pointer; transition:background .3s; }
-.day:hover{ background:rgba(99,102,241,0.15); }
-.day h3{ margin:0; display:flex; justify-content:space-between; font-weight:600; }
-.day-details{ max-height:0; overflow:hidden; opacity:0; transition:all .45s cubic-bezier(.25,.8,.25,1); }
-.day-details.open{ max-height:400px; opacity:1; margin-top:8px; }
-.exercise-page{ display:none; width:90%; max-width:700px; flex-direction:column; align-items:center; animation:fadeIn .5s ease; }
-.exercise-page iframe{ width:100%; height:350px; border-radius:12px; margin-bottom:16px; border:none; }
-.exercise-page.active{ display:flex; }
-.back-btn{ align-self:flex-start; margin-bottom:12px; background:linear-gradient(90deg,#6366f1,#8b5cf6); }
-@keyframes fadeIn{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
-.small-muted{ font-size:0.85em; opacity:0.8; }
+/* --- Styles (inchangés / modernisés) --- */
+body{font-family:'Inter',sans-serif;margin:0;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);color:#f8fafc;min-height:100vh;display:flex;flex-direction:column;align-items:center;}
+h1{font-weight:700;font-size:1.8em;margin:1em 0 0.5em;color:#a5b4fc;text-align:center;letter-spacing:1px;}
+h2{font-size:1.15em;color:#c7d2fe;margin:0 0 .6em 0;}
+.card{width:90%;max-width:700px;background:rgba(15,23,42,0.85);border:1px solid rgba(99,102,241,0.16);border-radius:14px;margin:12px 0;padding:16px;box-shadow:0 6px 24px rgba(0,0,0,0.28);backdrop-filter:blur(8px);}
+ul{list-style:none;padding:0;margin:0;}
+li{padding:10px 8px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;transition:background .15s;}
+li:hover{background:rgba(99,102,241,0.10);}
+button{padding:8px 12px;border-radius:8px;border:none;background:linear-gradient(90deg,#6366f1,#8b5cf6);color:#fff;font-weight:600;cursor:pointer;transition:transform .12s;}
+button:hover{transform:scale(1.03);}
+.reset-btn{background:linear-gradient(90deg,#ef4444,#f87171);}
+#timer_display{font-size:1.8em;font-weight:700;color:#a5b4fc;}
+.progress-container{background:rgba(255,255,255,0.07);height:12px;border-radius:10px;width:100%;overflow:hidden;margin-top:6px;}
+.progress-bar{height:12px;background:linear-gradient(90deg,#6366f1,#8b5cf6);width:0%;transition:width .4s;border-radius:10px;}
+.day{padding:12px;border-radius:10px;background:rgba(255,255,255,0.03);margin:8px 0;}
+.day h3{margin:0;display:flex;justify-content:space-between;font-weight:600;}
+.day-details{max-height:0;overflow:hidden;opacity:0;transition:all .45s cubic-bezier(.25,.8,.25,1);}
+.day-details.open{max-height:400px;opacity:1;margin-top:8px;}
+.exercise-page{display:none;width:92%;max-width:900px;flex-direction:column;align-items:center;animation:fadeIn .35s;}
+.exercise-page.active{display:flex;}
+.exercise-page iframe{width:100%;height:380px;border-radius:12px;border:none;margin-bottom:14px;}
+.back-btn{align-self:flex-start;margin-bottom:12px;background:linear-gradient(90deg,#6366f1,#8b5cf6);padding:8px 10px;border-radius:8px;border:none;color:#fff;font-weight:600;cursor:pointer;}
+.small-muted{color:#e6eef8;opacity:.85;margin-bottom:8px;}
+.tips li{margin:6px 0;padding-left:8px;}
+footer{margin-top:auto;padding:12px;font-size:.9em;opacity:.6;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
@@ -52,7 +51,7 @@ footer{ margin-top:auto; padding:12px; font-size:.9em; opacity:.6; }
   <div class="card" id="daily_session_card">
     <h2 id="session_title">💪 Séance du jour</h2>
     <ul id="session_list"></ul>
-    <button class="reset-btn" onclick="reset()">🔄 Reset séries</button>
+    <button class="reset-btn" onclick="resetSeries()">🔄 Reset séries</button>
     <button style="margin-top:10px;" onclick="markSessionDone()">✅ Séance terminée</button>
   </div>
 
@@ -67,7 +66,7 @@ footer{ margin-top:auto; padding:12px; font-size:.9em; opacity:.6; }
 
   <div class="card">
     <h2>⏱️ Minuteur global</h2>
-    <p><span id="timer_display">00:00</span></p>
+    <p id="timer_display">00:00</p>
     <div>
       <button onclick="startTimer()">▶ Start</button>
       <button onclick="stopTimer()">⏸ Stop</button>
@@ -82,93 +81,99 @@ footer{ margin-top:auto; padding:12px; font-size:.9em; opacity:.6; }
   <h2 id="exo_title"></h2>
   <iframe id="exo_video" src="" allowfullscreen title="Vidéo exercice"></iframe>
   <p id="exo_desc" class="small-muted"></p>
-  <ul id="exo_tips"></ul>
+  <ul id="exo_tips" class="tips"></ul>
 </div>
 
 <footer>© 2025 Escalade Trainer • Stay Strong 💥</footer>
 
 <script>
-// ------------ données des exercices (vidéos + descriptions + conseils) ------------
-// J'ai sélectionné des tutoriels YouTube de chaînes reconnues / guides pratiques.
-// Sources exemples : tutoriels weighted pushups, planks, inverted rows, dips, hangboarding.
-// (Voir message assistant pour citations.)
+/* ============================
+   Données d'exercices (toutes les exercises actives remplies)
+   Chaque entrée contient : video (embed URL), desc, tips[]
+   J'ai choisi des vidéos pédagogiques / tutorials YouTube publiques.
+   Sources principales listées dans la réponse.
+   ============================ */
 const exerciseData = {
   "Pompes lestées si possible — 4×10-12": {
     video: "https://www.youtube.com/embed/xZRBXI7we44",
-    desc: "Pompes avec charge additionnelle pour augmenter la force du haut du corps. Progression importante : maîtriser les pompes strictes avant d'ajouter du poids.",
-    tips: ["Garde le corps aligné (planche solide).", "Elbows ~45° pour protéger les épaules.", "Ajoute du poids progressivement (sac ou plaque)."]
+    desc: "Pompes avec charge additionnelle pour surcharger le mouvement horizontal et développer la force du haut du corps. Maîtrise les pompes strictes avant d'ajouter du poids.",
+    tips: ["Garde la colonne neutre (gainage).", "Coudes ~45° pour protéger les épaules.", "Ajoute du poids progressivement (sac à dos, plaque)."]
   },
   "Planche — 4×40s": {
     video: "https://www.youtube.com/embed/pSHjTRCQxIw",
-    desc: "Gainage frontal pour la stabilité du tronc — utile en escalade pour garder le corps proche de la paroi.",
-    tips: ["Ne creuse pas le bas du dos.", "Regarde le sol, serrer les fessiers.", "Respire calmement, maintien constant."]
+    desc: "Gainage frontal pour la stabilité du tronc — essentiel pour garder le corps proche de la paroi en escalade.",
+    tips: ["Ne creuse pas le bas du dos.", "Contracte fessiers et abdos.", "Respire calmement et maintiens la position."]
   },
   "Dips sur chaise — 4×12": {
-    video: "https://www.youtube.com/embed/c3ZGl4pAwZ4",
-    desc: "Dips sur banc/chaise pour travailler triceps et partie basse des pectoraux — adaptation maison simple.",
-    tips: ["Descends sans creuser les épaules.", "Garde les coudes près du buste.", "Si douleur à l'épaule : stop et remplace par extensions triceps."]
+    video: "https://www.youtube.com/embed/0326dy_-CzM",
+    desc: "Dips sur chaise / banc : bonne alternative maison pour les triceps et la partie basse des pectoraux.",
+    tips: ["Garde les épaules basses et le buste droit.", "Coudes près du corps pour engager les triceps.", "Si douleur, réduis amplitude ou remplace."]
   },
   "Tractions australiennes ou sur barre — 4×6-10": {
-    video: "https://www.youtube.com/embed/5W8F6MzZ8Rk",
-    desc: "Row inversé / Australian pull-up : progression vers les tractions, très utile pour le tirage en escalade.",
-    tips: ["Corps bien gainé, talons au sol.", "Tire la poitrine vers la barre.", "Contrôle la phase excentrique."]
+    video: "https://www.youtube.com/embed/bHO0A4ZF_Zg",
+    desc: "Row inversé / Australian pull-up : excellent pour progresser vers les tractions complètes et renforcer le dos pour l'escalade.",
+    tips: ["Corps gainé, talons au sol.", "Tire la poitrine vers la barre.", "Contrôle la descente (phase excentrique)."]
   },
   "Suspension sur prises maison — 4×20s": {
     video: "https://www.youtube.com/embed/yUIRzwyQx_E",
-    desc: "Exercices de suspension / fingerboard pour travailler la force des doigts (attention aux tendons si débutant).",
-    tips: ["Commence par suspensions à deux mains sur bords grands.", "Evite les hangs maximums si <1 an d'escalade.", "Echauffe spécifique avant toute session de doigts."]
+    desc: "Travail de suspension (hangs) pour renforcer les doigts et l'avant-bras. Attention aux tendons si tu débutes — échauffe spécifique.",
+    tips: ["Commence par prises grandes à deux mains.", "Évite les holds maximales si peu d'expérience.", "Fais des séries courtes, progresse lentement."]
   },
   "Rowing inversé sous table — 4×10": {
-    video: "https://www.youtube.com/embed/bHO0A4ZF_Zg",
-    desc: "Rowing sous table = alternative maison pour travailler le dos si tu n'as pas de barre.",
-    tips: ["Vérifie que la table est stable.", "Garde ligne droite du corps.", "Progression : élève les pieds pour plus de difficulté."]
+    video: "https://www.youtube.com/embed/5W8F6MzZ8Rk",
+    desc: "Rowing sous table : alternative maison au rowing pour développer le dos quand on n'a pas de barre.",
+    tips: ["Vérifie la stabilité de la table.", "Reste aligné de la tête aux talons.", "Rehausse les pieds pour augmenter la difficulté."]
   },
   "Squats — 4×15": {
     video: "https://www.youtube.com/embed/aclHkVaku9U",
-    desc: "Mouvement de base pour jambes et explosivité, fais attention à la profondeur selon ta mobilité.",
-    tips: ["Genoux alignés avec les orteils.", "Regarde légèrement en avant.", "Pousse avec les talons."]
+    desc: "Mouvement fondamental pour force et explosivité des jambes — utile pour pousser sur les appuis et la stabilité.",
+    tips: ["Pousse avec les talons.", "Genoux alignés sur la même ligne que les orteils.", "Garde la poitrine fière, regarde légèrement vers l'avant."]
   },
   "Fentes avant — 4×12": {
     video: "https://www.youtube.com/embed/2C-uNgKwPLE",
-    desc: "Fentes pour équilibre unilatéral et force fonctionnelle.",
-    tips: ["Torso droit, genou avant au-dessus du pied.", "Descend contrôlé.", "Alternes jambes pour symétrie."]
+    desc: "Fentes pour force unilatérale, équilibre et coordination — bon pour corriger les déséquilibres entre jambes.",
+    tips: ["Torso droit, genou avant au-dessus du pied.", "Descend contrôlé et pousse fort pour remonter.", "Alterne jambes pour symétrie."]
   },
   "Montées de genoux dynamiques — 4×30s": {
     video: "https://www.youtube.com/embed/8oB3z3TqC3Y",
-    desc: "Exercice pliométrique pour explosivité et coordination.",
-    tips: ["Mouvement explosif mais contrôlé.", "Garde cadence régulière.", "Bon échauffement préalable."]
+    desc: "Exercice pliométrique pour explosivité, cardio et coordination (bon échauffement actif).",
+    tips: ["Mouvement explosif mais contrôlé.", "Maintiens cadence régulière.", "Échauffe bien avant de commencer."]
   },
   "Pompes serrées — 4×12": {
     video: "https://www.youtube.com/embed/mzhpUO64N6Q",
-    desc: "Pompes prise serrée ciblent triceps et chaîne médiane — utile pour verrouillage sur blocs.",
-    tips: ["Mains proches sous la poitrine.", "Maintien neutre du poignet.", "Progression : pieds surélevés."]
+    desc: "Pompes en prise serrée pour cibler triceps et la stabilité du tronc — utile pour les verrouillages sur petits déplacements.",
+    tips: ["Mains proches sous la poitrine.", "Garde coudes près du corps.", "Progression : pieds surélevés pour plus d'intensité."]
   },
   "Suspension 3 doigts — 4×12s": {
     video: "https://www.youtube.com/embed/PebF3NyEGPc",
-    desc: "Suspensions sur prises petites (3 doigts) pour force spécifique doigts — avance prudemment.",
-    tips: ["Ne pas forcer si douleur aux tendons.", "Privilégie suspensions courtes et répétés.", "Renforce graduellement la difficulté."]
+    desc: "Exercices spécifiques doigts (3 doigts) pour développer la force de préhension — fais très attention aux signaux de douleur tendineuse.",
+    tips: ["Échauffe des doigts avant toute suspension.", "Commence très léger et augmente graduellement.", "Privilégie la qualité sur la durée."]
   },
   "Gainage latéral — 4×40s / côté": {
     video: "https://www.youtube.com/embed/2lP9qf8cD3s",
-    desc: "Stabilité latérale importante pour positionnement du corps sur dévers.",
-    tips: ["Epaule empilée sur la hanche.", "Garde corps aligné.", "Augmente le temps progressivement."]
+    desc: "Travail des obliques et de la stabilité latérale, utile pour la gestion des déséquilibres en escalade.",
+    tips: ["Épaule empilée sur la hanche.", "Corps aligné tête/épaules/hanches/genoux.", "Augmente le temps progressivement."]
+  },
+  "Tractions australiennes — 4×10": { // duplicate but explicit
+    video: "https://www.youtube.com/embed/bHO0A4ZF_Zg",
+    desc: "Version pour travailler le tirage. Très utile en renforcement pour l'escalade.",
+    tips: ["Contracte le dos en tirant.", "Maintiens corps droit.", "Contrôle la descente."]
   },
   "Crunchs — 4×20": {
     video: "https://www.youtube.com/embed/1fbU_MkV7NE",
-    desc: "Renforcement abdos supérieurs, utile pour la stabilité abdominale.",
-    tips: ["Ne tire pas avec la nuque.", "Concentre la contraction sur le ventre.", "Varie avec gainage pour équilibre."]
+    desc: "Renforcement des abdominaux supérieurs ; à combiner avec le gainage pour un tronc complet.",
+    tips: ["Ne tire pas sur la nuque.", "Concentre la contraction sur le ventre.", "Varie avec gainage pour un travail complet."]
   },
   "Planche latérale — 4×40s": {
     video: "https://www.youtube.com/embed/2lP9qf8cD3s",
-    desc: "Variante du gainage pour obliques et stabilité en torsion.",
-    tips: ["Respire pendant le maintien.", "Soutiens ton poids sur l'avant-bras.", "Ajoute élévation de jambe pour progression."]
-  },
-  "Étirements": { video: "https://www.youtube.com/embed/8TG6X3e3qjY", desc: "Séquence d'étirements post-entraînement.", tips: ["Maintiens 30s par muscle.", "Ne rebondis pas.", "Respire profondément."] },
-  "Mobilité": { video: "https://www.youtube.com/embed/2pLT-olgUJs", desc: "Mobilité et mouvements articulaires pour préparation.", tips: ["Focus hanches/épaules.", "Fais-le en début ou fin de séance.", "Progression douce."] },
-  "Hydratation": { video: "https://www.youtube.com/embed/dQw4w9WgXcQ", desc: "Rappel hydratation (vidéo illustrative).", tips: ["Bois régulièrement.", "Évite boissons sucrées pendant la séance."] }
+    desc: "Variante du gainage pour travailler les obliques et la stabilité en rotation.",
+    tips: ["Respire régulièrement.", "Épaule stable et corps aligné.", "Ajoute une variation (élévation jambe) pour progresser."]
+  }
 };
 
-// ------------ programme hebdomadaire ------------
+/* ============================
+   Programme hebdomadaire
+   ============================ */
 const programme = {
   Lundi: { title: "Poussée + Core", ex: ["Pompes lestées si possible — 4×10-12", "Planche — 4×40s", "Dips sur chaise — 4×12"] },
   Mardi: { title: "Tirage + Grip", ex: ["Tractions australiennes ou sur barre — 4×6-10", "Suspension sur prises maison — 4×20s", "Rowing inversé sous table — 4×10"] },
@@ -179,9 +184,12 @@ const programme = {
   Dimanche: { title: "Repos total", ex: ["Hydratation", "Préparation semaine", "Sieste 😌"] }
 };
 
-// ------------ génération du calendrier (réparé) ------------
+/* ============================
+   Calendrier (génération + toggle reparé)
+   ============================ */
 const calendar = document.getElementById('calendar');
 const todayName = new Date().toLocaleDateString('fr-FR', { weekday: 'long' });
+
 for (const [day, data] of Object.entries(programme)) {
   const d = document.createElement('div');
   d.className = 'day';
@@ -191,20 +199,21 @@ for (const [day, data] of Object.entries(programme)) {
                  </div>`;
   calendar.appendChild(d);
 }
-// toggle des details
+// toggle details
 calendar.addEventListener('click', (e)=>{
   const dayEl = e.target.closest('.day');
   if(!dayEl) return;
   const details = dayEl.querySelector('.day-details');
   const open = details.classList.contains('open');
-  // close all
   document.querySelectorAll('.day-details').forEach(d=>d.classList.remove('open'));
   if(!open) details.classList.add('open');
 });
 
-// ------------ affichage séance du jour + rendre les exos cliquables ------------
+/* ============================
+   Séance du jour (cliquable)
+   ============================ */
 const sessionList = document.getElementById('session_list');
-const title = document.getElementById('session_title');
+const titleEl = document.getElementById('session_title');
 const todayKey = todayName.charAt(0).toUpperCase() + todayName.slice(1);
 const todayData = programme[todayKey];
 
@@ -213,7 +222,7 @@ function makeExerciseClickable(li, exName){
 }
 
 if(todayData){
-  title.textContent = `💪 Séance du jour (${todayData.title})`;
+  titleEl.textContent = `💪 Séance du jour (${todayData.title})`;
   todayData.ex.forEach(ex=>{
     const li = document.createElement('li');
     li.textContent = ex;
@@ -221,25 +230,27 @@ if(todayData){
     makeExerciseClickable(li, ex);
   });
 } else {
-  title.textContent = "😌 Jour de repos / étirements";
+  titleEl.textContent = "😌 Jour de repos / étirements";
   sessionList.innerHTML = "<li>Profite pour récupérer et t’étirer !</li>";
 }
 
-// Also make calendar's inner exercise items clickable
+// rendre les exos dans le calendrier cliquables (sans toggler la journée)
 document.querySelectorAll('.day-exercise').forEach(el=>{
   const exName = el.textContent;
   el.style.cursor = 'pointer';
   el.addEventListener('click', (ev)=>{
-    ev.stopPropagation(); // prevent toggling day
+    ev.stopPropagation(); // empêche toggle de la journée
     openExercise(exName);
   });
 });
 
-// ------------ navigation exercice ------------
+/* ============================
+   Navigation vers la page exercice
+   ============================ */
 function openExercise(exName){
   const exo = exerciseData[exName];
   if(!exo){
-    alert("Aucune donnée disponible pour cet exercice (je peux en ajouter plus).");
+    alert("Aucune donnée pour cet exercice — je peux l'ajouter si tu veux.");
     return;
   }
   document.getElementById("main_page").style.display = "none";
@@ -249,7 +260,6 @@ function openExercise(exName){
   document.getElementById("exo_video").src = exo.video;
   document.getElementById("exo_desc").textContent = exo.desc;
   document.getElementById("exo_tips").innerHTML = exo.tips.map(t=>`<li>💡 ${t}</li>`).join('');
-  // Scroll to top for better UX
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 function goBack(){
@@ -258,36 +268,73 @@ function goBack(){
   document.getElementById("exo_video").src = "";
 }
 
-// ------------ progression & timer (inchangé, fonctionnel) ------------
-function markSessionDone(){ const today=new Date().toISOString().split('T')[0];let h=JSON.parse(localStorage.getItem('sessions_done')||'[]'); if(!h.includes(today)){ h.push(today); localStorage.setItem('sessions_done', JSON.stringify(h)); } updateProgress(); }
+/* ============================
+   Progression & Timer (inchangé mais fonctionnel)
+   ============================ */
+function markSessionDone(){
+  const today = new Date().toISOString().split('T')[0];
+  let history = JSON.parse(localStorage.getItem('sessions_done')||'[]');
+  if(!history.includes(today)){
+    history.push(today);
+    localStorage.setItem('sessions_done', JSON.stringify(history));
+  }
+  updateProgress();
+}
 function updateProgress(){
-  const h = JSON.parse(localStorage.getItem('sessions_done')||'[]');
+  const history = JSON.parse(localStorage.getItem('sessions_done')||'[]');
   const today = new Date();
-  const yearWeek = (d=>{ const oneJan=new Date(d.getFullYear(),0,1); const numberOfDays=Math.floor((d-oneJan)/(24*60*60*1000)); return Math.ceil((numberOfDays + oneJan.getDay()+1)/7); })(today);
-  const weekSessions = h.filter(date=>{ const d = new Date(date); const week = (d=>{ const oneJan=new Date(d.getFullYear(),0,1); const numberOfDays=Math.floor((d-oneJan)/(24*60*60*1000)); return Math.ceil((numberOfDays + oneJan.getDay()+1)/7); })(d); return week === yearWeek; }).length;
+  // week number (simple)
+  const yearWeek = (d=>{
+    const oneJan=new Date(d.getFullYear(),0,1);
+    const numberOfDays=Math.floor((d-oneJan)/(24*60*60*1000));
+    return Math.ceil((numberOfDays + oneJan.getDay()+1)/7);
+  })(today);
+
+  const weekSessions = history.filter(date=>{
+    const d = new Date(date);
+    const week = (d=>{
+      const oneJan = new Date(d.getFullYear(),0,1);
+      const numberOfDays = Math.floor((d-oneJan)/(24*60*60*1000));
+      return Math.ceil((numberOfDays + oneJan.getDay()+1)/7);
+    })(d);
+    return week === yearWeek;
+  }).length;
+
   const weekProgress = Math.min((weekSessions/5)*100,100);
   document.getElementById('week_progress_bar').style.width = weekProgress+'%';
   document.getElementById('week_progress_text').textContent = `${weekSessions}/5 séances`;
 
+  // month
   const month = today.getMonth();
-  const monthSessions = h.filter(date => new Date(date).getMonth() === month).length;
+  const monthSessions = history.filter(date => new Date(date).getMonth() === month).length;
   const monthDays = new Date(today.getFullYear(), month+1,0).getDate();
   const monthProgress = Math.min((monthSessions/(monthDays/2))*100,100);
   document.getElementById('month_progress_bar').style.width = monthProgress+'%';
   document.getElementById('month_progress_text').textContent = `${monthSessions} séances`;
 
-  let streak = 0; let checkDate = new Date(today);
-  while(h.includes(checkDate.toISOString().split('T')[0])){ streak++; checkDate.setDate(checkDate.getDate()-1); }
+  // streak
+  let streak = 0;
+  let checkDate = new Date(today);
+  while(history.includes(checkDate.toISOString().split('T')[0])){
+    streak++;
+    checkDate.setDate(checkDate.getDate()-1);
+  }
   document.getElementById('streak_value').textContent = streak;
 }
 updateProgress();
 
-let timerInterval; let timerSeconds = parseInt(localStorage.getItem('timerSeconds')||'0'); const display = document.getElementById('timer_display');
-function updateDisplay(){ let m=Math.floor(timerSeconds/60), s=timerSeconds%60; display.textContent = `${m<10?'0':''}${m}:${s<10?'0':''}${s}`; } updateDisplay();
+/* Timer */
+let timerInterval;
+let timerSeconds = parseInt(localStorage.getItem('timerSeconds')||'0',10)||0;
+const display = document.getElementById('timer_display');
+function updateDisplay(){ let m=Math.floor(timerSeconds/60), s=timerSeconds%60; display.textContent = `${m<10?'0':''}${m}:${s<10?'0':''}${s}`; }
+updateDisplay();
 function startTimer(){ if(timerInterval) return; timerInterval = setInterval(()=>{ timerSeconds++; localStorage.setItem('timerSeconds', timerSeconds); updateDisplay(); },1000); }
-function stopTimer(){ clearInterval(timerInterval); timerInterval = null; }
-function resetTimer(){ timerSeconds = 0; updateDisplay(); localStorage.removeItem('timerSeconds'); }
-function reset(){ /* placeholder reset séries possible */ alert("Reset séries (à implémenter selon ton UI de séries)"); }
+function stopTimer(){ clearInterval(timerInterval); timerInterval=null; }
+function resetTimer(){ timerSeconds=0; updateDisplay(); localStorage.removeItem('timerSeconds'); }
+
+/* Placeholder reset séries */
+function resetSeries(){ alert("Reset séries : implémente ici ta logique de séries si besoin."); }
 
 </script>
 </body>
